@@ -1,0 +1,33 @@
+<html>
+<div id="chartContainer">
+  <script src="d3.v4.3.0.js"></script>
+  <script src="http://dimplejs.org/dist/dimple.v2.3.0.min.js"></script>
+  <script type="text/javascript">
+    var svg = dimple.newSvg("#chartContainer", 590, 400);
+		//Load data and filter 
+        d3.csv("baseball_data.csv", function (data) {
+            // Filter the data based on the condition avg > 0.28
+            data = data.filter(function (d) {
+                return parseFloat(d.avg) > 0.28
+            });        //data = dimple.filterData(data, "handedness", "R");
+        var myChart = new dimple.chart(svg, data);
+        myChart.setBounds(60, 30, 500, 330);
+			var x = myChart.addMeasureAxis('x', 'height');
+			x.title = "height";
+			
+			//set the y axis min and max
+			x.overrideMin = 65;
+			x.overrideMax = 80;
+			var y = myChart.addMeasureAxis('y', 'avg');
+			y.title = "Batting Average";
+
+			//set the y axis min and max
+			y.overrideMin = 0.26;
+			y.overrideMax = 0.35;        myChart.addMeasureAxis('z','HR');
+        myChart.addSeries(["name", "handedness"], dimple.plot.bubble);
+        myChart.addLegend(200, 10, 360, 20, "right");
+        myChart.draw();
+      });
+  </script>
+</div>
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Visualizing baseball data with Dimple  / D3</title>
+    <script src="d3.v4.3.0.js"></script>
+    <script src="http://dimplejs.org/dist/dimple.v2.3.0.min.js"></script>
+	<link rel="stylesheet" href="css/styles.css">
+
+</head>
+<body>
+<h1>Visualizing baseball data with Dimple  / D3</h1>
+<h3>About data</h3>
+&nbsp; &nbsp; &nbsp; 
+In this visualization we are presenting the performance of 1157 baseball players. The data itself is offering different information:
+<ul>
+  <li>Player's name</li>
+  <li>Handeness: left, right or both hands</li>
+  <li>Height: players height</li>
+  <li>Weight: players weight</li>
+  <li>Average: average batting performance</li>
+  <li>HR: Homeruns</li>
+</ul>
+	
+<h3>Approach</h3>
+&nbsp; &nbsp; &nbsp; We want to visualize the data in regards to two aspects:<br>
+
+<ul>
+  <li>1) Visualize possible correlations between the height and the average batting performance of the players. For this, we use a bubble chart and filter on the 
+top players having an average > 0,28 to avoid having too many data points.</li>
+  <li>2) We want to visualize, if the handedness (left, right, both) has an impact on the average of the average batting performance</li>
+</ul>
+<br>
+    <div id="chartContainer1"></div>
+    <script type="text/javascript">
+        //Create svg and use container
+		var svg1 = dimple.newSvg("#chartContainer1", 590, 400);
+		
+		//Formatting svg
+		svg1.append("text")
+			.attr("x", 295)             
+			.attr("y", 15)
+			.attr("text-anchor", "middle")  
+			.style("font-size", "14px") 
+		    .style("font-family", "Verdana")
+			.style("font-weight", "bold")
+		    .style("fill", "black")
+			.text("Average Batting Performance vs Player's Height (filtered on avg > 0,28)");
+	
+		//Load data and filter 
+        d3.csv("baseball_data.csv", function (data) {
+            // Filter the data based on the condition avg > 0.28
+            data = data.filter(function (d) {
+                return parseFloat(d.avg) > 0.28
+            });
+			
+			//Create dimple chart
+            var myChart1 = new dimple.chart(svg1, data);
+            myChart1.setBounds(60, 30, 500, 330);
+			//myChart2.addTimeAxis("x", "date", "%Y-%m-%d");
+            
+			//y axis as variable showing the average
+			var x = myChart1.addMeasureAxis('x', 'height');
+			x.title = "Height of the Player";
+			
+			//set the y axis min and max
+			x.overrideMin = 65;
+			x.overrideMax = 80;
+			
+			//y axis as variable showing the average
+			var y = myChart1.addMeasureAxis('y', 'avg');
+			y.title = "Batting Average (avg)";
+
+			//set the y axis min and max
+			y.overrideMin = 0.26;
+			y.overrideMax = 0.35;
+			
+            myChart1.addMeasureAxis('z', 'HR');
+
+            // Add a bubble series and set the radius
+			var bubbleSeries2 = myChart1.addSeries(["name", "handedness"], dimple.plot.bubble);
+            bubbleSeries2.radius = 20; // Set a fixed radius for the bubbles
+            
+            // Set a specific color for the bubbles
+            //myChart2.defaultColors = [new dimple.color("red")];
+
+            // Add legend
+            myChart1.addLegend(400, 35, 360, 100, "left");
+
+			//Draw final chart  
+            myChart1.draw();
+        });
+    </script>
+	
+	<div id="chartContainer2"></div>
+    <script>
+      // Load the data from your CSV file and filter as before
+        d3.csv("baseball_data.csv", function (data) {
+            // No more filter
+            data = data.filter(function (d) {
+                return parseFloat(d.avg) >= 0.0
+            });
+			
+        //Create svg and use container
+        var svg2 = dimple.newSvg("#chartContainer2", 590, 400);
+		
+		 //Formatting svg
+		svg2.append("text")
+		.attr("x", 295)             
+		.attr("y", 25)
+		.attr("text-anchor", "middle")  
+		.style("font-size", "15px") 
+		.style("font-family", "Verdana")
+		.style("font-weight", "bold")
+		.style("fill", "black")
+		.text("Average of the avg batting performance per Handedness");
+
+        // Create a Dimple chart using the loaded data
+        var myChart2 = new dimple.chart(svg2, data);
+
+        // Define x-axis: handedness and title
+          var x = myChart2.addCategoryAxis("x", "handedness");
+          x.title = "Handedness of the player (B: both, L: left, R: right))";
+		  
+        // Define y-axis: Average number of Homeruns and title
+          var y1 = myChart2.addMeasureAxis("y", "avg");
+          y1.title = "Average of the avg batting performance";
+		  
+		//Add series and get the average homerun rate per category
+          myChart2.addSeries("Average of the avg batting performance", dimple.plot.bar, [x, y1])
+            .aggregate = dimple.aggregateMethod.avg;
+
+		//Legend
+          myChart2.addLegend(400, 35, 000, 100, "left");
+		  
+		//Draw final chart  
+          myChart2.draw();
+
+      });
+    </script>
+
+<h3>Interpretation and findingsInterpretation and findings</h3>
+<ul>
+  <li>1) Shorter players have a slightly better batting performance </li>
+  <li>2) Both hand players have the best average of the average batting performance closely followed by the left-hand players. This is quite interesting and maybe both handed players have simply more options to switch and adapt.</li>
+
+	
+<h3>External resources</h3>
+<a href='https://stackoverflow.com/questions/33179439/d3-js-dimple-getting-a-title-on-a-graph'>1) Stackoverflow: Getting a title</a>
+<br><br>
+<a href='https://stackoverflow.com/questions/25559658/dimple-js-how-to-customize-range-of-values-on-y-axis-from-0-to-100'>2) Stackoverflow: Dimple.js how to customize range of values on Y-axis from 0 to 100?</a>
+<br><br>
+<a href='http://dimplejs.org/examples_viewer.html?id=bubbles_standard'>3) Dimple.js: Bubble Template</a>
+<br><br>
+<a href='https://www.w3schools.com/html/html_css.asp'>4) W3schools: HTML Styles - CSS</a>
+<br><br>
+<a href='https://www.w3schools.com/css/css_link.asp'>5) W3schools: HTML Styles - CSS Links</a>
+<br><br>
+<a href='https://www.udacity.com'>6) Udactiy Nanodegree: Data Visualization chapter</a>
+<br><br>  </body>
+</html>

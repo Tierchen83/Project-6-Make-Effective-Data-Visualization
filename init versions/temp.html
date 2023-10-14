@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<title>TEMP try file</title>
+    <script src="d3.v4.3.0.js"></script>
+    <script src="http://dimplejs.org/dist/dimple.v2.3.0.min.js"></script>
+	<link rel="stylesheet" href="css/styles.css">
+  </head>
+  <body>
+    <div id="chartContainer"></div>
+    <script>
+      // Load the data from your CSV file
+      d3.csv("baseball_data.csv", function (data) {
+        // Group data by handedness
+        var groupedData = d3.nest()
+          .key(function(d) { return d.handedness; })
+          .rollup(function(leaves) {
+            return d3.mean(leaves, function(d) { return d.HR; });
+          })
+          .entries(data);
+
+        // Create a Dimple chart
+        var svg = dimple.newSvg("#chartContainer", 800, 400);
+
+        // Create a Dimple chart using the grouped data
+        var chart = new dimple.chart(svg, groupedData);
+
+        // Define the x-axis (handedness) and y-axis (average homeruns)
+        var x = chart.addCategoryAxis("x", "key");
+        var y = chart.addMeasureAxis("y", "values");
+
+      
+        chart.draw();
+      });
+    </script>
+  </body>
+</html>

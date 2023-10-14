@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<title>bar</title>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="http://dimplejs.org/dist/dimple.v2.0.0.min.js"></script>
+	<link rel="stylesheet" href="css/styles.css">
+  </head>
+  <body>
+    <div id="chartContainer"></div>
+    <script>
+      // Load the data from your CSV file and filter as before
+        d3.csv("baseball_data.csv", function (data) {
+            // No more filter
+            data = data.filter(function (d) {
+                return parseFloat(d.avg) >= 0.0
+            });
+			
+        // Create Dimple chart
+        var svg = dimple.newSvg("#chartContainer", 590, 400);
+		
+		svg.append("text")
+		.attr("x", 295)             
+		.attr("y", 25)
+		.attr("text-anchor", "middle")  
+		.style("font-size", "13px") 
+		.style("font-family", "Verdana")
+		.style("font-weight", "bold")
+		.style("fill", "orange")
+		.text("Average number of Homeruns per handedness for all players");
+
+        // Create a Dimple chart using the loaded data
+        var myChart = new dimple.chart(svg, data);
+
+        // Define x-axis: handedness and title
+          var x = myChart.addCategoryAxis("x", "handedness");
+          x.title = "Handedness of the player (B: both, L: left, R: right))";
+		  
+        // Define y-axis: Average number of Homeruns and title
+          var y1 = myChart.addMeasureAxis("y", "HR");
+          y1.title = "Average number of Homeruns";
+		  
+		//Add series and get the average homerun rate per category
+          myChart.addSeries("Average number of Homeruns", dimple.plot.bar, [x, y1])
+            //.aggregate = dimple.aggregateMethod.avg;
+
+		//Legend
+          myChart.addLegend(400, 35, 000, 100, "left");
+		  
+		//Draw final chart  
+          myChart.draw();
+
+      });
+    </script>
+  </body>
+</html>

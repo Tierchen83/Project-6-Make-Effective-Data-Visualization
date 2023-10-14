@@ -1,0 +1,44 @@
+body {
+  font-family: Verdana;
+  font-size: 14px;
+    margin: 35px;
+	background: grey;}
+h1 {
+  font-family: verdana;
+    margin: 35px;
+}
+h3 {
+  font-family: verdana;
+    margin: 35px;
+}
+
+p {
+  font-family: verdana;
+      margin: 35px;
+}
+	a:link {
+	  color: white;
+	    font-family: verdana;
+      margin: 35px;
+	}
+
+	/* visited link */
+	a:visited {
+	  color: white;
+	    font-family: verdana;
+      margin: 35px;
+	}
+
+	/* mouse over link */
+	a:hover {
+	  color: black;
+	    font-family: verdana;
+      margin: 35px;
+	}
+
+	/* selected link */
+	a:active {
+	  color: black;
+	    font-family: verdana;
+      margin: 35px;
+	}

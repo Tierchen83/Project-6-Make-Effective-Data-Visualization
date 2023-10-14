@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Bar Chart with Averages</title>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="http://dimplejs.org/dist/dimple.v2.0.0.min.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+  </head>
+  <body>
+    <div id="chartContainer"></div>
+    <script>
+      // Load the data from your CSV file
+      d3.csv("baseball_data.csv", function (data) {
+        // Create a Dimple chart
+        var svg = dimple.newSvg("#chartContainer", 800, 400);
+
+        // Create a Dimple chart using the loaded data
+        var chart = new dimple.chart(svg, data);
+
+        // Define the x-axis (handedness) and y-axis (homeruns)
+        var x = chart.addCategoryAxis("x", "handedness");
+        var y = chart.addMeasureAxis("y", "HR");
+
+        // Create a series for the bars
+        var series = chart.addSeries("handedness", dimple.plot.bar);
+
+        // Define a custom tooltip format
+        series.getTooltipText = function (e) {
+          var category = e.xValue;
+          var homeruns = e.yValue;
+          var avg = d3.mean(data, function(d) {
+            if (d.handedness === category) {
+              return +d.HR; // Ensure HR is parsed as a number
+            }
+            return 0;
+          });
+          return [
+            "Handedness: " + category,
+            "Homeruns: " + homeruns,
+            "Average: " + (avg ? avg.toFixed(2) : "N/A")
+          ];
+        };
+
+        // Draw the chart
+        chart.draw();
+      });
+    </script>
+  </body>
+</html>
